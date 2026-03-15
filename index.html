@@ -741,66 +741,20 @@
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Booking form — mostrar modal de confirmación
-    let pendingBooking = null;
-
+    // Booking form — guardar en localStorage y redirigir a confirmar.html
     function handleBooking(e) {
       e.preventDefault();
       const form = e.target;
-
-      pendingBooking = {
+      const reserva = {
         nombre: form.querySelector('input[type="text"]').value,
         email: form.querySelector('input[type="email"]').value,
         fecha_llegada: form.querySelectorAll('input[type="date"]')[0].value,
         fecha_salida: form.querySelectorAll('input[type="date"]')[1].value,
         huespedes: form.querySelectorAll('select')[0].value,
-        tipo_hotel: form.querySelectorAll('select')[0].value,
+        tipo_hotel: form.querySelectorAll('select')[1].value,
       };
-
-      // Formatear fechas bonitas
-      const fmt = (d) => new Date(d).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
-
-      // Mostrar modal con resumen
-      document.getElementById('modalBody').innerHTML = `
-        <div class="modal-row"><span class="modal-label">Nombre</span><span class="modal-value">${pendingBooking.nombre}</span></div>
-        <div class="modal-row"><span class="modal-label">Email</span><span class="modal-value">${pendingBooking.email}</span></div>
-        <div class="modal-row"><span class="modal-label">Llegada</span><span class="modal-value">${fmt(pendingBooking.fecha_llegada)}</span></div>
-        <div class="modal-row"><span class="modal-label">Salida</span><span class="modal-value">${fmt(pendingBooking.fecha_salida)}</span></div>
-        <div class="modal-row"><span class="modal-label">Huéspedes</span><span class="modal-value">${pendingBooking.huespedes}</span></div>
-        <div class="modal-row"><span class="modal-label">Hotel</span><span class="modal-value">${pendingBooking.tipo_hotel}</span></div>
-      `;
-
-      document.getElementById('confirmModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('confirmModal').style.display = 'none';
-      pendingBooking = null;
-    }
-
-    async function confirmBooking() {
-      const modalBody = document.getElementById('modalBody');
-      const footer = document.querySelector('.modal-footer');
-      modalBody.innerHTML = '<p style="text-align:center;color:var(--warm-gray);">Enviando reserva...</p>';
-      footer.style.display = 'none';
-
-      const { error } = await supabase.from('reservas').insert([pendingBooking]);
-
-      if (error) {
-        modalBody.innerHTML = `<p style="text-align:center;color:#e74c3c;">❌ Error al enviar: ${error.message}</p>`;
-      } else {
-        modalBody.innerHTML = `
-          <div class="modal-success">
-            <div class="check">✅</div>
-            <h2>¡Reserva enviada!</h2>
-            <p>Te contactaremos pronto al email para confirmar tu estancia en Mazatlán.</p>
-          </div>
-        `;
-        document.querySelector('form').reset();
-      }
-
-      footer.style.display = 'flex';
-      footer.innerHTML = '<button class="modal-cancel" onclick="closeModal()" style="margin:0 auto;">Cerrar</button>';
+      localStorage.setItem('reserva_pendiente', JSON.stringify(reserva));
+      window.location.href = 'confirmar.html';
     }
 
     // Hotel book buttons

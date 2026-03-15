@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Reservación — Viajes Playeros</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sand: #F5E6D3;
+      --sunset-orange: #FF6B35;
+      --sunset-coral: #FF8C61;
+      --sunset-gold: #FFB347;
+      --ocean-deep: #004E64;
+      --ocean-mid: #007B8F;
+      --ocean-light: #25A18E;
+      --foam: #E8F4F2;
+      --white: #FFFEF9;
+      --charcoal: #1A1A1A;
+      --warm-gray: #6B5E54;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--charcoal);
+      min-height: 100vh;
+    }
+
+    /* NAVBAR */
+    nav {
+      width: 100%; padding: 1.2rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--white);
+      border-bottom: 1px solid rgba(0, 78, 100, 0.08);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 900;
+      color: var(--ocean-deep); text-decoration: none;
+    }
+    .nav-logo span { color: var(--sunset-orange); }
+    .nav-back {
+      display: flex; align-items: center; gap: 0.4rem;
+      color: var(--warm-gray); text-decoration: none; font-size: 0.9rem;
+      font-weight: 500; transition: color 0.3s;
+    }
+    .nav-back:hover { color: var(--ocean-deep); }
+
+    /* HERO MINI */
+    .page-hero {
+      background: linear-gradient(135deg, var(--ocean-deep) 0%, var(--ocean-mid) 100%);
+      padding: 3rem 3rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(255,179,71,0.15) 0%, transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(255,107,53,0.1) 0%, transparent 60%);
+    }
+    .page-hero-content { position: relative; z-index: 1; }
+    .page-hero .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white); padding: 0.4rem 1rem;
+      border-radius: 50px; font-size: 0.8rem;
+      font-weight: 500; margin-bottom: 1rem; letter-spacing: 1px;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      color: var(--white); font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+    .page-hero p { color: rgba(255,255,255,0.7); font-size: 1rem; }
+
+    /* WAVES */
+    .waves {
+      background: linear-gradient(135deg, var(--ocean-deep) 0%, var(--ocean-mid) 100%);
+      line-height: 0;
+    }
+    .waves svg { display: block; width: 100%; }
+
+    /* MAIN */
+    main {
+      max-width: 700px; margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    /* SUMMARY CARD */
+    .summary-card {
+      background: var(--white);
+      border: 1px solid rgba(0,78,100,0.1);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,78,100,0.08);
+      margin-bottom: 2rem;
+    }
+    .summary-header {
+      background: var(--foam);
+      padding: 1.2rem 1.8rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      border-bottom: 1px solid rgba(0,78,100,0.08);
+    }
+    .summary-header h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--ocean-deep); font-size: 1.2rem;
+    }
+    .summary-body { padding: 0.5rem 0; }
+    .summary-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.8rem;
+      border-bottom: 1px solid rgba(0,78,100,0.05);
+      transition: background 0.2s;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row:hover { background: rgba(37,161,142,0.03); }
+    .summary-label {
+      color: var(--warm-gray); font-size: 0.85rem;
+      font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .summary-value {
+      color: var(--charcoal); font-weight: 600; font-size: 0.95rem;
+      text-align: right; max-width: 60%;
+    }
+    .summary-value.highlight {
+      color: var(--ocean-deep);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+    }
+
+    /* NIGHTS BADGE */
+    .nights-badge {
+      background: var(--ocean-deep); color: var(--white);
+      padding: 0.25rem 0.7rem; border-radius: 50px;
+      font-size: 0.8rem; font-weight: 600;
+      margin-left: 0.5rem;
+    }
+
+    /* NOTICE */
+    .notice {
+      background: rgba(37,161,142,0.08);
+      border: 1px solid rgba(37,161,142,0.2);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      display: flex; gap: 0.7rem;
+      margin-bottom: 2rem;
+      font-size: 0.88rem;
+      color: var(--ocean-deep);
+      line-height: 1.5;
+    }
+    .notice-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* ACTIONS */
+    .actions {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+    .btn-back {
+      flex: 1; min-width: 140px;
+      background: transparent; border: 2px solid rgba(0,78,100,0.15);
+      color: var(--warm-gray); padding: 1rem 1.5rem;
+      border-radius: 14px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.3s;
+      font-family: 'DM Sans', sans-serif;
+      text-align: center; text-decoration: none; display: block;
+    }
+    .btn-back:hover { border-color: var(--warm-gray); color: var(--charcoal); }
+    .btn-confirm {
+      flex: 2; min-width: 200px;
+      background: var(--sunset-orange); color: var(--white); border: none;
+      padding: 1rem 2rem; border-radius: 14px;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.3s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-confirm:hover {
+      background: var(--sunset-coral);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255,107,53,0.35);
+    }
+    .btn-confirm:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+    /* SUCCESS */
+    .success-screen {
+      display: none;
+      text-align: center; padding: 3rem 2rem;
+    }
+    .success-icon { font-size: 4rem; margin-bottom: 1.5rem; }
+    .success-screen h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; color: var(--ocean-deep); margin-bottom: 0.8rem;
+    }
+    .success-screen p {
+      color: var(--warm-gray); font-size: 1rem; line-height: 1.7;
+      max-width: 400px; margin: 0 auto 2rem;
+    }
+    .success-screen .ref-num {
+      background: var(--foam); border-radius: 12px; padding: 0.8rem 1.5rem;
+      display: inline-block; font-weight: 700; color: var(--ocean-deep);
+      font-size: 0.95rem; margin-bottom: 2rem;
+    }
+    .btn-home {
+      background: var(--ocean-deep); color: var(--white);
+      padding: 0.9rem 2.5rem; border-radius: 50px;
+      text-decoration: none; font-weight: 600; font-size: 1rem;
+      display: inline-block; transition: all 0.3s;
+    }
+    .btn-home:hover { background: var(--ocean-mid); }
+
+    /* ERROR */
+    .error-msg {
+      display: none;
+      background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.2);
+      border-radius: 12px; padding: 1rem 1.2rem;
+      color: #c0392b; font-size: 0.9rem; margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.5rem; }
+      .page-hero { padding: 2rem 1.5rem 3rem; }
+      main { padding: 2rem 1rem 3rem; }
+      .actions { flex-direction: column; }
+      .btn-back, .btn-confirm { flex: none; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="index.html" class="nav-logo">Viajes <span>Playeros</span></a>
+    <a href="index.html" class="nav-back">← Volver</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="page-hero-content">
+      <div class="tag">📋 PASO 2 DE 2</div>
+      <h1>Confirma tu reservación</h1>
+      <p>Revisa los detalles antes de confirmar tu estancia en Mazatlán</p>
+    </div>
+  </div>
+  <div class="waves">
+    <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 40C240 80 480 0 720 40C960 80 1200 0 1440 40V80H0V40Z" fill="#FFFEF9"/>
+    </svg>
+  </div>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- Pantalla de confirmación -->
+    <div id="confirmScreen">
+      <div class="summary-card">
+        <div class="summary-header">
+          <span>🏖️</span>
+          <h2>Detalles de tu reservación</h2>
+        </div>
+        <div class="summary-body" id="summaryBody">
+          <!-- Contenido inyectado por JS -->
+        </div>
+      </div>
+
+      <div class="notice">
+        <span class="notice-icon">ℹ️</span>
+        <span>Al confirmar, un agente de Viajes Playeros te contactará al email proporcionado para finalizar tu reservación y método de pago.</span>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <div class="actions">
+        <a href="index.html" class="btn-back">← Modificar</a>
+        <button class="btn-confirm" id="btnConfirm" onclick="confirmarReservacion()">
+          Confirmar Reservación ✓
+        </button>
+      </div>
+    </div>
+
+    <!-- Pantalla de éxito -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">🎉</div>
+      <h2>¡Reservación confirmada!</h2>
+      <p>Hemos recibido tu solicitud. Un agente te contactará pronto al email que proporcionaste para finalizar los detalles de tu estancia en Mazatlán.</p>
+      <div class="ref-num" id="refNum">Folio: #000000</div>
+      <br>
+      <a href="index.html" class="btn-home">Volver al inicio</a>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = 'https://cohljpynypvxgfqrmfsy.supabase.co';
+    const supabaseKey = 'sb_publishable_AaJb1urg4_d-xeisOeFWjw_1Qizf8Rn';
+    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Leer datos del localStorage
+    const reserva = JSON.parse(localStorage.getItem('reserva_pendiente'));
+
+    if (!reserva) {
+      // Si no hay datos, regresar al inicio
+      window.location.href = 'index.html';
+    }
+
+    const fmt = (d) => {
+      const [y, m, day] = d.split('-');
+      return new Date(y, m - 1, day).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    };
+
+    const calcNoches = (llegada, salida) => {
+      const d1 = new Date(llegada), d2 = new Date(salida);
+      return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+    };
+
+    const noches = calcNoches(reserva.fecha_llegada, reserva.fecha_salida);
+
+    document.getElementById('summaryBody').innerHTML = `
+      <div class="summary-row">
+        <span class="summary-label">Nombre</span>
+        <span class="summary-value highlight">${reserva.nombre}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Email</span>
+        <span class="summary-value">${reserva.email}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Hotel</span>
+        <span class="summary-value highlight">${reserva.tipo_hotel}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Llegada</span>
+        <span class="summary-value">${fmt(reserva.fecha_llegada)}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Salida</span>
+        <span class="summary-value">
+          ${fmt(reserva.fecha_salida)}
+          <span class="nights-badge">${noches} noche${noches !== 1 ? 's' : ''}</span>
+        </span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Huéspedes</span>
+        <span class="summary-value">${reserva.huespedes}</span>
+      </div>
+    `;
+
+    async function confirmarReservacion() {
+      const btn = document.getElementById('btnConfirm');
+      const errorMsg = document.getElementById('errorMsg');
+      btn.disabled = true;
+      btn.textContent = '⏳ Guardando...';
+      errorMsg.style.display = 'none';
+
+      const { data, error } = await client.from('reservas').insert([reserva]).select();
+
+      if (error) {
+        errorMsg.textContent = '❌ Ocurrió un error al guardar: ' + error.message;
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Confirmar Reservación ✓';
+        return;
+      }
+
+      // Limpiar localStorage
+      localStorage.removeItem('reserva_pendiente');
+
+      // Mostrar éxito con folio
+      const folio = String(data[0].id).padStart(6, '0');
+      document.getElementById('refNum').textContent = 'Folio: #' + folio;
+      document.getElementById('confirmScreen').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
