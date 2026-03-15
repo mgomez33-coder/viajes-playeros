@@ -740,6 +740,7 @@
         tipo_hotel: selects[1].value,
       };
       localStorage.setItem('reserva_pendiente', JSON.stringify(reserva));
+      localStorage.setItem('reserva_email', JSON.stringify(reserva));
       window.location.href = 'confirmar.html';
     }
 
