@@ -648,17 +648,18 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Tipo de hotel</label>
+            <label>Hotel</label>
             <select required>
-              <option value="">Seleccionar</option>
-              <option>Económico</option>
-              <option>Medio</option>
-              <option>Lujo</option>
-              <option>All Inclusive</option>
+              <option value="">Selecciona un hotel</option>
+              <option>Grand Velas Riviera Nayarit ★★★★★</option>
+              <option>Grand Fiesta Americana Mazatlán ★★★★★</option>
+              <option>Casa Lulu Beach Hotel ★★★★</option>
+              <option>Hacienda Mazatlán ★★★★</option>
+              <option>Estrella del Mar Golf Resort ★★★★★</option>
             </select>
           </div>
         </div>
-        <button type="submit" class="form-submit">Buscar Hoteles Disponibles →</button>
+        <button type="submit" class="form-submit">Reservar →</button>
       </form>
     </div>
   </section>
@@ -753,7 +754,7 @@
         fecha_llegada: form.querySelectorAll('input[type="date"]')[0].value,
         fecha_salida: form.querySelectorAll('input[type="date"]')[1].value,
         huespedes: form.querySelectorAll('select')[0].value,
-        tipo_hotel: form.querySelectorAll('select')[1].value,
+        tipo_hotel: form.querySelectorAll('select')[0].value,
       };
 
       // Formatear fechas bonitas
@@ -766,7 +767,7 @@
         <div class="modal-row"><span class="modal-label">Llegada</span><span class="modal-value">${fmt(pendingBooking.fecha_llegada)}</span></div>
         <div class="modal-row"><span class="modal-label">Salida</span><span class="modal-value">${fmt(pendingBooking.fecha_salida)}</span></div>
         <div class="modal-row"><span class="modal-label">Huéspedes</span><span class="modal-value">${pendingBooking.huespedes}</span></div>
-        <div class="modal-row"><span class="modal-label">Tipo de hotel</span><span class="modal-value">${pendingBooking.tipo_hotel}</span></div>
+        <div class="modal-row"><span class="modal-label">Hotel</span><span class="modal-value">${pendingBooking.tipo_hotel}</span></div>
       `;
 
       document.getElementById('confirmModal').style.display = 'flex';
