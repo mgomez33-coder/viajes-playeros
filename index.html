@@ -378,6 +378,62 @@
       .footer-content { grid-template-columns: 1fr; }
       .highlights-grid { grid-template-columns: 1fr; }
     }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      background: var(--white); border-radius: 20px;
+      max-width: 500px; width: 100%;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header {
+      padding: 1.5rem 2rem 1rem; border-bottom: 1px solid rgba(0,78,100,0.08);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--ocean-deep); }
+    .modal-close {
+      background: none; border: none; font-size: 1.5rem; cursor: pointer;
+      color: var(--warm-gray); transition: color 0.3s;
+    }
+    .modal-close:hover { color: var(--charcoal); }
+    .modal-body { padding: 1.5rem 2rem; }
+    .modal-row {
+      display: flex; justify-content: space-between; padding: 0.7rem 0;
+      border-bottom: 1px solid rgba(0,78,100,0.06);
+    }
+    .modal-row:last-child { border-bottom: none; }
+    .modal-label { color: var(--warm-gray); font-size: 0.85rem; font-weight: 500; }
+    .modal-value { color: var(--charcoal); font-weight: 600; font-size: 0.95rem; }
+    .modal-footer {
+      padding: 1rem 2rem 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;
+    }
+    .modal-cancel {
+      background: transparent; border: 2px solid rgba(0,78,100,0.15);
+      color: var(--warm-gray); padding: 0.7rem 1.5rem; border-radius: 12px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+    }
+    .modal-cancel:hover { border-color: var(--warm-gray); }
+    .modal-confirm {
+      background: var(--ocean-deep); color: var(--white); border: none;
+      padding: 0.7rem 1.5rem; border-radius: 12px; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; transition: all 0.3s;
+    }
+    .modal-confirm:hover { background: var(--ocean-mid); }
+    .modal-success {
+      text-align: center; padding: 3rem 2rem;
+    }
+    .modal-success .check { font-size: 3rem; margin-bottom: 1rem; }
+    .modal-success h2 { font-family: 'Playfair Display', serif; color: var(--ocean-deep); margin-bottom: 0.5rem; }
+    .modal-success p { color: var(--warm-gray); }
   </style>
 </head>
 <body>
@@ -607,6 +663,21 @@
     </div>
   </section>
 
+  <!-- MODAL CONFIRMACIÓN -->
+  <div id="confirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>📋 Confirma tu reserva</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
+        <button class="modal-confirm" onclick="confirmBooking()">✓ Confirmar Reserva</button>
+      </div>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer>
     <div class="footer-content">
@@ -669,16 +740,14 @@
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Booking form — guardar en Supabase
-    async function handleBooking(e) {
+    // Booking form — mostrar modal de confirmación
+    let pendingBooking = null;
+
+    function handleBooking(e) {
       e.preventDefault();
       const form = e.target;
-      const btn = form.querySelector('.form-submit');
-      const orig = btn.textContent;
-      btn.textContent = '⏳ Enviando...';
-      btn.disabled = true;
 
-      const data = {
+      pendingBooking = {
         nombre: form.querySelector('input[type="text"]').value,
         email: form.querySelector('input[type="email"]').value,
         fecha_llegada: form.querySelectorAll('input[type="date"]')[0].value,
@@ -687,23 +756,50 @@
         tipo_hotel: form.querySelectorAll('select')[1].value,
       };
 
-      const { error } = await supabase.from('reservas').insert([data]);
+      // Formatear fechas bonitas
+      const fmt = (d) => new Date(d).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      // Mostrar modal con resumen
+      document.getElementById('modalBody').innerHTML = `
+        <div class="modal-row"><span class="modal-label">Nombre</span><span class="modal-value">${pendingBooking.nombre}</span></div>
+        <div class="modal-row"><span class="modal-label">Email</span><span class="modal-value">${pendingBooking.email}</span></div>
+        <div class="modal-row"><span class="modal-label">Llegada</span><span class="modal-value">${fmt(pendingBooking.fecha_llegada)}</span></div>
+        <div class="modal-row"><span class="modal-label">Salida</span><span class="modal-value">${fmt(pendingBooking.fecha_salida)}</span></div>
+        <div class="modal-row"><span class="modal-label">Huéspedes</span><span class="modal-value">${pendingBooking.huespedes}</span></div>
+        <div class="modal-row"><span class="modal-label">Tipo de hotel</span><span class="modal-value">${pendingBooking.tipo_hotel}</span></div>
+      `;
+
+      document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+      pendingBooking = null;
+    }
+
+    async function confirmBooking() {
+      const modalBody = document.getElementById('modalBody');
+      const footer = document.querySelector('.modal-footer');
+      modalBody.innerHTML = '<p style="text-align:center;color:var(--warm-gray);">Enviando reserva...</p>';
+      footer.style.display = 'none';
+
+      const { error } = await supabase.from('reservas').insert([pendingBooking]);
 
       if (error) {
-        btn.textContent = '❌ Error';
-        btn.style.background = '#e74c3c';
-        console.error(error);
+        modalBody.innerHTML = `<p style="text-align:center;color:#e74c3c;">❌ Error al enviar: ${error.message}</p>`;
       } else {
-        btn.textContent = '✓ ¡Reserva enviada!';
-        btn.style.background = '#25A18E';
-        form.reset();
+        modalBody.innerHTML = `
+          <div class="modal-success">
+            <div class="check">✅</div>
+            <h2>¡Reserva enviada!</h2>
+            <p>Te contactaremos pronto al email para confirmar tu estancia en Mazatlán.</p>
+          </div>
+        `;
+        document.querySelector('form').reset();
       }
 
-      setTimeout(() => {
-        btn.textContent = orig;
-        btn.style.background = '';
-        btn.disabled = false;
-      }, 3000);
+      footer.style.display = 'flex';
+      footer.innerHTML = '<button class="modal-cancel" onclick="closeModal()" style="margin:0 auto;">Cerrar</button>';
     }
 
     // Hotel book buttons
