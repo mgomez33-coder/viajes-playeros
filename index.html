@@ -664,20 +664,6 @@
     </div>
   </section>
 
-  <!-- MODAL CONFIRMACIÓN -->
-  <div id="confirmModal" class="modal-overlay" style="display:none;">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>📋 Confirma tu reserva</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-      <div class="modal-footer">
-        <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
-        <button class="modal-confirm" onclick="confirmBooking()">✓ Confirmar Reserva</button>
-      </div>
-    </div>
-  </div>
 
   <!-- FOOTER -->
   <footer>
@@ -713,12 +699,7 @@
   </footer>
 
   <!-- SUPABASE -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabaseUrl = 'https://cohljpynypvxgfqrmfsy.supabase.co';
-    const supabaseKey = 'sb_publishable_AaJb1urg4_d-xeisOeFWjw_1Qizf8Rn';
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
     // Slider
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide');
