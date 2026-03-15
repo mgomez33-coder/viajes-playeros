@@ -659,7 +659,7 @@
             </select>
           </div>
         </div>
-        <button type="submit" class="form-submit">Reservar →</button>
+        <button type="button" class="form-submit" onclick="irAConfirmar()">Reservar →</button>
       </form>
     </div>
   </section>
@@ -742,11 +742,14 @@
     });
 
     // Booking form
-    document.getElementById('reservaForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const form = this;
+    function irAConfirmar() {
+      const form = document.getElementById('reservaForm');
       const inputs = form.querySelectorAll('input');
       const selects = form.querySelectorAll('select');
+      if (!inputs[0].value || !inputs[1].value || !inputs[2].value || !inputs[3].value || !selects[0].value || !selects[1].value) {
+        alert('Por favor llena todos los campos.');
+        return;
+      }
       const reserva = {
         nombre: inputs[0].value.trim(),
         email: inputs[1].value.trim(),
@@ -757,7 +760,7 @@
       };
       localStorage.setItem('reserva_pendiente', JSON.stringify(reserva));
       window.location.href = 'confirmar.html';
-    });
+    }
 
     // Hotel book buttons
     document.querySelectorAll('.hotel-book').forEach(btn => {
