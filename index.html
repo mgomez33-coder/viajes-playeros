@@ -635,7 +635,13 @@
     </div>
   </footer>
 
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const supabaseUrl = 'https://cohljpynypvxgfqrmfsy.supabase.co';
+    const supabaseKey = 'sb_publishable_AaJb1urg4_d-xeisOeFWjw_1Qizf8Rn';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
     // Slider
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide');
@@ -669,14 +675,41 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // Booking form
-    function handleBooking(e) {
+    // Booking form — guardar en Supabase
+    async function handleBooking(e) {
       e.preventDefault();
-      const btn = e.target.querySelector('.form-submit');
+      const form = e.target;
+      const btn = form.querySelector('.form-submit');
       const orig = btn.textContent;
-      btn.textContent = '✓ ¡Consulta enviada!';
-      btn.style.background = '#25A18E';
-      setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 3000);
+      btn.textContent = '⏳ Enviando...';
+      btn.disabled = true;
+
+      const data = {
+        nombre: form.querySelector('input[type="text"]').value,
+        email: form.querySelector('input[type="email"]').value,
+        fecha_llegada: form.querySelectorAll('input[type="date"]')[0].value,
+        fecha_salida: form.querySelectorAll('input[type="date"]')[1].value,
+        huespedes: form.querySelectorAll('select')[0].value,
+        tipo_hotel: form.querySelectorAll('select')[1].value,
+      };
+
+      const { error } = await supabase.from('reservas').insert([data]);
+
+      if (error) {
+        btn.textContent = '❌ Error';
+        btn.style.background = '#e74c3c';
+        console.error(error);
+      } else {
+        btn.textContent = '✓ ¡Reserva enviada!';
+        btn.style.background = '#25A18E';
+        form.reset();
+      }
+
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
     }
 
     // Hotel book buttons
