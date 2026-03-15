@@ -377,30 +377,19 @@
       // Calcular folio
       const folio = String(data[0].id).padStart(6, '0');
 
-      // Enviar alerta por email (Resend)
+      // Enviar alerta por email (via Vercel Edge Function)
       try {
-        await fetch('https://api.resend.com/emails', {
+        await fetch('/api/send-email', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer re_Cp5Qxx62_Ht15o4FrjMZjSDvPwAigwiSB'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            from: 'Viajes Playeros <onboarding@resend.dev>',
-            to: ['mgomez33@gmail.com'],
-            subject: `🏖️ Nueva reservación - ${reserva.nombre}`,
-            html: `
-              <h2>Nueva reservación en Viajes Playeros</h2>
-              <table style="border-collapse:collapse;width:100%;max-width:500px;">
-                <tr><td style="padding:8px;border:1px solid #eee;"><strong>Nombre</strong></td><td style="padding:8px;border:1px solid #eee;">${reserva.nombre}</td></tr>
-                <tr><td style="padding:8px;border:1px solid #eee;"><strong>Email</strong></td><td style="padding:8px;border:1px solid #eee;">${reserva.email}</td></tr>
-                <tr><td style="padding:8px;border:1px solid #eee;"><strong>Hotel</strong></td><td style="padding:8px;border:1px solid #eee;">${reserva.tipo_hotel}</td></tr>
-                <tr><td style="padding:8px;border:1px solid #eee;"><strong>Llegada</strong></td><td style="padding:8px;border:1px solid #eee;">${reserva.fecha_llegada}</td></tr>
-                <tr><td style="padding:8px;border:1px solid #eee;"><strong>Salida</strong></td><td style="padding:8px;border:1px solid #eee;">${reserva.fecha_salida}</td></tr>
-                <tr><td style="padding:8px;border:1px solid #eee;"><strong>Huéspedes</strong></td><td style="padding:8px;border:1px solid #eee;">${reserva.huespedes}</td></tr>
-              </table>
-              <p style="color:#666;margin-top:16px;">Folio: #${folio} | Viajes Playeros Mazatlán</p>
-            `
+            nombre: reserva.nombre,
+            email: reserva.email,
+            hotel: reserva.tipo_hotel,
+            llegada: reserva.fecha_llegada,
+            salida: reserva.fecha_salida,
+            huespedes: reserva.huespedes,
+            folio: folio
           })
         });
       } catch (e) {
