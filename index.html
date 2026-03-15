@@ -614,7 +614,7 @@
         <h2>Tu escape perfecto</h2>
         <p>Dinos tus fechas y preferencias. Nosotros encontramos el hotel ideal para ti.</p>
       </div>
-      <form class="booking-form" onsubmit="handleBooking(event)">
+      <form class="booking-form" id="reservaForm">
         <div class="form-row">
           <div class="form-group">
             <label>Nombre completo</label>
@@ -741,21 +741,23 @@
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Booking form — guardar en localStorage y redirigir a confirmar.html
-    function handleBooking(e) {
+    // Booking form
+    document.getElementById('reservaForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const form = e.target;
+      const form = this;
+      const inputs = form.querySelectorAll('input');
+      const selects = form.querySelectorAll('select');
       const reserva = {
-        nombre: form.querySelector('input[type="text"]').value,
-        email: form.querySelector('input[type="email"]').value,
-        fecha_llegada: form.querySelectorAll('input[type="date"]')[0].value,
-        fecha_salida: form.querySelectorAll('input[type="date"]')[1].value,
-        huespedes: form.querySelectorAll('select')[0].value,
-        tipo_hotel: form.querySelectorAll('select')[1].value,
+        nombre: inputs[0].value.trim(),
+        email: inputs[1].value.trim(),
+        fecha_llegada: inputs[2].value,
+        fecha_salida: inputs[3].value,
+        huespedes: selects[0].value,
+        tipo_hotel: selects[1].value,
       };
       localStorage.setItem('reserva_pendiente', JSON.stringify(reserva));
       window.location.href = 'confirmar.html';
-    }
+    });
 
     // Hotel book buttons
     document.querySelectorAll('.hotel-book').forEach(btn => {
